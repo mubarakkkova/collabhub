@@ -8,12 +8,11 @@ Django midterm project, KBTU.
 
 ## Team
 
-- Danelya Mubarakova — team lead, project setup
+- Danelya Mubarakova — team lead, project setup, deliverables
 - Dastan — users
 - Birzhan — campaigns
-- Danelya — collaborations
 - Azat — contracts
-- Aidana — deliverables
+- Aidana — collaborations
 
 ## How to run
 
