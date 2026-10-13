@@ -1,0 +1,4 @@
+Django>=5.2,<6.0
+python-decouple>=3.8
+psycopg[binary]>=3.2
+ruff>=0.6
