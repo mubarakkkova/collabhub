@@ -1,3 +1,5 @@
+"""Admin panel configuration for the deliverables app."""
+
 from django.contrib.admin import ModelAdmin, action, display, register
 from django.db.models import QuerySet
 from django.http import HttpRequest
@@ -7,11 +9,13 @@ from apps.deliverables.models import Deliverable, Review
 
 
 class SoftDeleteAdmin(ModelAdmin):
-    """Keeps soft delete safe in the admin"""
+    """Keeps soft delete safe in the admin (Lecture 5, section 9)."""
 
     def has_delete_permission(
         self, request: HttpRequest, obj: Deliverable | Review | None = None
     ) -> bool:
+        # obj is None on the list page -> hides "Delete selected",
+        # which would call queryset.delete() and remove rows for real
         if obj is None or obj.deleted_at is not None:
             return False
         return super().has_delete_permission(request, obj)
@@ -19,9 +23,12 @@ class SoftDeleteAdmin(ModelAdmin):
 
 @register(Deliverable)
 class DeliverableAdmin(SoftDeleteAdmin):
+    """Deliverables list: status, statistics and quick approve / reject."""
+
     list_display = (
         "id",
         "contract",
+        "post_link",
         "status",
         "views",
         "likes",
@@ -33,7 +40,7 @@ class DeliverableAdmin(SoftDeleteAdmin):
     list_display_links = ("id", "contract")
     list_filter = ("status", "published_at")
     search_fields = ("post_url", "business_comment")
-    list_select_related = ("contract",)
+    list_select_related = ("contract",)  # one JOIN instead of a query per row
     raw_id_fields = ("contract",)
     date_hierarchy = "published_at"
     readonly_fields = ("created_at", "updated_at", "deleted_at")
@@ -67,18 +74,20 @@ class DeliverableAdmin(SoftDeleteAdmin):
         self, request: HttpRequest, queryset: QuerySet[Deliverable]
     ) -> None:
         updated: int = queryset.update(status=Deliverable.Status.APPROVED)
-        self.message_user(request, f"{updated} deliverable(s) approved")
+        self.message_user(request, f"{updated} deliverable(s) approved.")
 
     @action(description="Send selected back for changes")
     def mark_needs_changes(
         self, request: HttpRequest, queryset: QuerySet[Deliverable]
     ) -> None:
         updated: int = queryset.update(status=Deliverable.Status.NEEDS_CHANGES)
-        self.message_user(request, f"{updated} deliverable(s) sent back")
+        self.message_user(request, f"{updated} deliverable(s) sent back.")
 
 
 @register(Review)
 class ReviewAdmin(SoftDeleteAdmin):
+    """Reviews list with filters by rating."""
+
     list_display = (
         "id",
         "contract",
@@ -96,9 +105,9 @@ class ReviewAdmin(SoftDeleteAdmin):
     readonly_fields = ("created_at", "updated_at", "deleted_at")
     list_per_page = 50
 
-    @display(description="Rating", ordering="ratting")
+    @display(description="Rating", ordering="rating")
     def stars(self, obj: Review) -> str:
-        return "⭑" * obj.rating + "☆" * (Review.RATING_MAX - obj.rating)
+        return "★" * obj.rating + "☆" * (Review.RATING_MAX - obj.rating)
 
     @display(description="Deleted", boolean=True)
     def is_deleted(self, obj: Review) -> bool:
