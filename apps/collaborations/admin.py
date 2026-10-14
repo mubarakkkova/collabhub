@@ -48,15 +48,15 @@ class CollaborationAdmin(ModelAdmin):
     )
     list_display_links = ("id", "campaign")
     list_filter = (
-        "statis",
+        "status",
         "campaign__platform",
         "campaign__niche",
         "created_at",
         ("deleted_at", EmptyFieldListFilter),
     )
     search_fields = (
-        "campaign__name",
-        "bloger__email",
+        "campaign__title",
+        "blogger__email",
         "blogger__full_name",
         "message",
     )
