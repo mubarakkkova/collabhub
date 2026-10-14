@@ -23,7 +23,7 @@ from apps.abstracts.models import AbstractBaseModel
 
 
 class Deliverable(AbstractBaseModel):
-    """A post/story/video that the blogger published under a contract"""
+    """A post / story / video that the blogger published under a contract."""
 
     class Status(TextChoices):
         SUBMITTED = "submitted", "Submitted"
@@ -35,7 +35,7 @@ class Deliverable(AbstractBaseModel):
     contract = ForeignKey(
         to="contracts.Contract",
         on_delete=PROTECT,
-        related_name="deliverable",
+        related_name="deliverables",
         verbose_name="Contract",
     )
     post_url = URLField(
@@ -54,7 +54,7 @@ class Deliverable(AbstractBaseModel):
     )
     comments = PositiveIntegerField(
         default=0,
-        verbose_name="Coments",
+        verbose_name="Comments",
     )
     status = CharField(
         max_length=STATUS_MAX_LEN,
@@ -74,26 +74,26 @@ class Deliverable(AbstractBaseModel):
         verbose_name = "Deliverable"
         verbose_name_plural = "Deliverables"
         ordering = ("-published_at",)
-        constraints = (
+        constraints = [
             # the same post cannot be submitted twice for one contract
             UniqueConstraint(
                 fields=("contract", "post_url"),
                 condition=Q(deleted_at__isnull=True),
                 name="unique_active_contract_post_url",
-            )
-        )
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"{self.post_url} ({self.get_status_display()})"
 
     @property
     def engagement(self) -> int:
-        "Likes + comments: how actively people reacted to the post"
+        """Likes + comments: how actively people reacted to the post."""
         return self.likes + self.comments
 
 
 class Review(AbstractBaseModel):
-    """Feedback that one side of a contract leaves about the other side"""
+    """Feedback that one side of a contract leaves about the other side."""
 
     RATING_MIN = 1
     RATING_MAX = 5
@@ -107,7 +107,7 @@ class Review(AbstractBaseModel):
     author = ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=PROTECT,
-        related_name="reviews_written",
+        related_name="reviews_written",  # two FKs to the user -> names are required
         verbose_name="Author",
     )
     target = ForeignKey(
@@ -151,6 +151,6 @@ class Review(AbstractBaseModel):
         return f"{self.rating}/5 from {self.author} to {self.target}"
 
     def clean(self) -> None:
-        """Nobody can review themselves"""
+        """Nobody can review themselves."""
         if self.author_id and self.author_id == self.target_id:
-            raise ValidationError({"target": "You cannot review yourself"})
+            raise ValidationError({"target": "You cannot review yourself."})
