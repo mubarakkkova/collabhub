@@ -46,7 +46,7 @@ class NicheAdminForm(ModelForm):
     def clean_name(self) -> str:
         """checking the field: the niche name must be a real word."""
 
-        name: str = self.cleaned.data["name"]
+        name: str = self.cleaned_data["name"]
         if len(name) < self.MIN_NAME_LEN:
             raise ValidationError("The niche name is too short")
         return name.capitalize()
