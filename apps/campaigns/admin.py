@@ -35,7 +35,7 @@ class CampaignAdminForm(ModelForm):
             duplicates = Campaign.objects.filter(
                 business=business,
                 title=title,
-                deleted_at_isnull=True,
+                deleted_at__isnull=True,
             )
             if self.instance.pk:
                 duplicates = duplicates.exclude(pk=self.instance.pk)
