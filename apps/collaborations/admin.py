@@ -1,4 +1,4 @@
-"""Admin panel for collaborations and their status history"""
+"""Admin panel for collaborations and their status history."""
 
 from django.contrib.admin import (
     EmptyFieldListFilter,
@@ -83,6 +83,9 @@ class CollaborationAdmin(ModelAdmin):
     )
 
     @display(description="Deleted", boolean=True)
+    def is_deleted(self, obj: Collaboration) -> bool:
+        return obj.deleted_at is not None
+
     def has_delete_permission(
         self, request: HttpRequest, obj: Collaboration | None = None
     ) -> bool:
