@@ -79,7 +79,7 @@ class CampaignAdmin(ModelAdmin):
         "business__email",
         "business__full_name",
     )
-    search_help_text = "Searche by title, description, business email or name"
+    search_help_text = "Search by title, description, business email or name"
     list_select_related = ("business", "niche")
     raw_id_fields = ("business",)
     readonly_fields = ("id", "created_at", "updated_at", "deleted_at")
