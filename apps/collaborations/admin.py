@@ -83,9 +83,6 @@ class CollaborationAdmin(ModelAdmin):
     )
 
     @display(description="Deleted", boolean=True)
-    def is_deleted(self, obj: Collaboration) -> bool:
-        return obj.deleted_at is not None
-
     def has_delete_permission(
         self, request: HttpRequest, obj: Collaboration | None = None
     ) -> bool:
@@ -93,6 +90,12 @@ class CollaborationAdmin(ModelAdmin):
         if obj is None or obj.deleted_at is not None:
             return False
         return super().has_delete_permission(request, obj)
+
+    def get_deleted_objects(
+        self, objs: QuerySet | list[Collaboration], request: HttpRequest
+    ) -> tuple[list[str], dict[str, int], set[str], list[str]]:
+        """Soft delete keeps related rows, so PROTECT must not block it."""
+        return [str(obj) for obj in objs], {}, set(), []
 
     def set_status(self, queryset: QuerySet, status: str) -> int:
         """Change status one by one, so save() writes the history."""
