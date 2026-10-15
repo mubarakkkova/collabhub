@@ -76,8 +76,8 @@ class CampaignAdmin(ModelAdmin):
     search_fields = (
         "title",
         "description",
-        "business_email",
-        "business_full_name",
+        "business__email",
+        "business__full_name",
     )
     search_help_text = "Searche by title, description, business email or name"
     list_select_related = ("business", "niche")
