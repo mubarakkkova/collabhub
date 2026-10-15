@@ -1,4 +1,4 @@
-"""Deliverables app: content published under a contract and reviews."""
+"""Deliverables app: content published under a contract and reviews"""
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -88,12 +88,12 @@ class Deliverable(AbstractBaseModel):
 
     @property
     def engagement(self) -> int:
-        """Likes + comments: how actively people reacted to the post."""
+        """Likes + comments: how actively people reacted to the post"""
         return self.likes + self.comments
 
 
 class Review(AbstractBaseModel):
-    """Feedback that one side of a contract leaves about the other side."""
+    """Feedback that one side of a contract leaves about the other side"""
 
     RATING_MIN = 1
     RATING_MAX = 5
@@ -107,7 +107,7 @@ class Review(AbstractBaseModel):
     author = ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=PROTECT,
-        related_name="reviews_written",  # two FKs to the user -> names are required
+        related_name="reviews_written",
         verbose_name="Author",
     )
     target = ForeignKey(
@@ -151,6 +151,6 @@ class Review(AbstractBaseModel):
         return f"{self.rating}/5 from {self.author} to {self.target}"
 
     def clean(self) -> None:
-        """Nobody can review themselves."""
+        """Nobody can review themselves"""
         if self.author_id and self.author_id == self.target_id:
-            raise ValidationError({"target": "You cannot review yourself."})
+            raise ValidationError({"target": "You cannot review yourself"})
