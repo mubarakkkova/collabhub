@@ -2,6 +2,8 @@
 
 import os
 
+from django.utils.translation import gettext_lazy as _
+
 from settings.conf import *  # noqa: F403
 
 # ----------------------------------------------
@@ -24,6 +26,8 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework_simplejwt",
 ]
 PROJECT_APPS = [
     "apps.abstracts.apps.AbstractsConfig",
@@ -81,10 +85,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # ----------------------------------------------
 # Internationalization
 #
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+LANGUAGES = [
+    ("en", _("English")),
+    ("ru", _("Russian")),
+    ("kk", _("Kazakh")),
+]
+LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 TIME_ZONE = "Asia/Almaty"
 USE_I18N = True
 USE_TZ = True
+
+# ----------------------------------------------
+# Static | Media
+#
+CELERY_TIMEZONE = TIME_ZONE
 
 # ----------------------------------------------
 # Static | Media

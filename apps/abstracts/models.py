@@ -2,8 +2,16 @@
 
 from typing import Any
 
-from django.db.models import DateTimeField, Model
+from django.db.models import DateTimeField, Manager, Model, QuerySet
 from django.utils import timezone as django_timezone
+
+
+class AliveManager(Manager):
+    """Manager with alive():  only row that not soft deleted"""
+
+    def alive(self) -> QuerySet:
+        """Return the objects whose deleted_at is empty"""
+        return self.get_queryset().filter(deleted_at__isnull=True)
 
 
 class AbstractBaseModel(Model):
@@ -19,6 +27,8 @@ class AbstractBaseModel(Model):
         null=True,
         blank=True,
     )
+
+    objects = AliveManager()
 
     class Meta:
         """Meta class for AbstractBaseModel."""
