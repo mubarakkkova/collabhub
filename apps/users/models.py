@@ -36,6 +36,11 @@ class UserRole(TextChoices):
     BUSINESS = "business", "Business"
     BLOGGER = "blogger", "Blogger"
 
+class Language(TextChoices):
+    """Lang of the interface"""
+    EN = "en", "English"
+    RU = "ru", "Русский"
+    KK = "kk", "Қазақша"
 
 class SocialPlatform(TextChoices):
     """Social networks where a blogger publishes content."""
@@ -101,6 +106,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, AbstractBaseModel):
     EMAIL_MAX_LEN = 254
     FULL_NAME_MAX_LEN = 150
     ROLE_MAX_LEN = 20
+    LANGUAGE_MAX_LEN = 2 
 
     email = EmailField(
         max_length=EMAIL_MAX_LEN,
@@ -129,6 +135,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, AbstractBaseModel):
         default=False,
         verbose_name="is staff",
         help_text="Allows logging in to the admin panel.",
+    )
+    prefered_language = CharField(
+        max_length=LANGUAGE_MAX_LEN,
+        choices=Language,
+        default=Language.EN,
+        verbose_name="preferred language",
+        help_text="Email and API messages come in this language."
     )
 
     USERNAME_FIELD = "email"
